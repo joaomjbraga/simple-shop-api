@@ -1,0 +1,28 @@
+{
+  "name": "estudos-de-banco-de-dados",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/server.ts",
+  "scripts": {
+    "dev": "tsx --watch src/server.ts",
+    "knex": "tsx ./node_modules/.bin/knex",
+    "build": "tsc",
+    "start": "node ./dist/src/server.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "express": "^5.2.1",
+    "knex": "^3.1.0",
+    "sqlite3": "^5.1.7",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.10.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  },
+  "knex": {
+    "config": "./knexfile.ts"
+  }
+}
