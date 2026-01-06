@@ -1,32 +1,44 @@
-import { type Request, type Response, type NextFunction, response } from "express"
+import type { Request, Response, NextFunction } from "express"
 import { SetupKnex } from "@/database.js"
 import z from "zod"
 
 export class ClientsControllers {
 
   async Index(request: Request, response: Response, next: NextFunction) {
-    const list = await SetupKnex('client').select('*')
-    return response.status(200).json(list)
+    try {
+      const list = await SetupKnex('client').select('*')
+      return response.status(200).json(list)
+    } catch (error) {
+      next(error)
+    }
   }
   async IndexUsers(request: Request, response: Response, next: NextFunction) {
-    const parmschama = z.object({
-      id: z.coerce.number()
-    })
-    const {id} = parmschama.parse(request.params)
-    const user = await SetupKnex<ClientRepository>('client').select('name').where({id})
-    return response.status(200).json(user)
+    try {
+      const paramsSchema = z.object({
+        id: z.coerce.number()
+      })
+      const { id } = paramsSchema.parse(request.params)
+      const user = await SetupKnex<ClientRepository>('client').select('name').where({ id }).first()
+
+      if (!user) {
+        return response.status(404).json({ message: 'Usuário não encontrado' })
+      }
+
+      return response.status(200).json(user)
+    } catch (error) {
+      next(error)
+    }
   }
 
   async Create(request: Request, response: Response, next: NextFunction) {
+    try {
+      const bodySchema = z.object({
+        name: z.string().trim().min(4)
+      })
+      const { name } = bodySchema.parse(request.body)
 
-    try{
-      const bodyschema = z.object({
-      name: z.string().trim().min(4)
-    })
-     const { name } = bodyschema.parse(request.body)
-
-     await SetupKnex<ClientRepository>('client').insert({name})
-     return response.send('Usuario Adicionado com sucesso')
+     await SetupKnex<ClientRepository>('client').insert({ name })
+     return response.status(201).json({ message: 'Usuário adicionado com sucesso' })
 
     } catch (error) {
       next(error)
@@ -36,22 +48,39 @@ export class ClientsControllers {
 
   async Upgrade(request: Request, response: Response, next: NextFunction) {
     try {
-      const bodyschema = z.object({
+      const bodySchema = z.object({
         id: z.coerce.number(),
         name: z.coerce.string().trim()
       })
-      const {id, name} =  bodyschema.parse(request.body)
-      await SetupKnex<ClientRepository>('client').update({name}).where({id})
+      const { id, name } = bodySchema.parse(request.body)
+      const updated = await SetupKnex<ClientRepository>('client').update({ name }).where({ id })
 
-      response.send('Atualizado')
+      if (updated === 0) {
+        return response.status(404).json({ message: 'Usuário não encontrado' })
+      }
+
+      return response.status(200).json({ message: 'Usuário atualizado com sucesso' })
     } catch (error) {
       next(error)
     }
   }
 
   async Delete(request: Request, response: Response, next: NextFunction) {
-    const { id } = request.body
-    await SetupKnex('client').where({id}).del()
-    return response.status(204).send('Usuario deletado com sucesso!')
+    try {
+      const bodySchema = z.object({
+        id: z.coerce.number()
+      })
+      const { id } = bodySchema.parse(request.body)
+
+      const deleted = await SetupKnex('client').where({ id }).del()
+
+      if (deleted === 0) {
+        return response.status(404).json({ message: 'Usuário não encontrado' })
+      }
+
+      return response.status(204).send()
+    } catch (error) {
+      next(error)
+    }
   }
 }

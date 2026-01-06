@@ -6,7 +6,7 @@ const Config: Knex.Config = {
     filename: './src/data/dados.db'
   },
   pool: {
-    afterCreate: (connection: any, done: any ) =>  {
+    afterCreate: (connection: any, done: any) => {
       connection.run("PRAGMA foreign_key = ON")
       done()
     }

@@ -1,7 +1,7 @@
 {
-  "name": "estudos-de-banco-de-dados",
+  "name": "simple-shop-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "API REST para gerenciamento de loja simples - clientes, produtos e carrinho de compras",
   "main": "src/server.ts",
   "scripts": {
     "dev": "tsx --watch src/server.ts",

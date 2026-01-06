@@ -1,4 +1,4 @@
-# API de Loja 🛒
+# Simple Shop API 🛒
 
 API REST desenvolvida como **exercício prático** para consolidar conceitos de backend com **Node.js, TypeScript, Express e Knex**. O projeto simula o funcionamento básico de uma loja: cadastro de clientes, produtos e operações relacionadas a compras.
 
